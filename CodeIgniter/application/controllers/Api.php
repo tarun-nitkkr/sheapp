@@ -18,7 +18,7 @@ class Api extends CI_Controller {
 
     function __construct() {
         parent::__construct();
-        header('Content-Type: application/json');
+        //header('Content-Type: application/json');
         $this->load->helper('security');
         $this->load->library('CommonLib');
         $this->load->library('ApiResponse');

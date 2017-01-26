@@ -10,8 +10,9 @@ class CommonLib {
     private $commonModel;
     
     function __construct()
-	{
-		$this->load->model('CommonModel');
+	{        
+        $this->CI =& get_instance();
+		$this->CI->load->model('CommonModel');
         $this->commonModel = new CommonModel();
 	}
     
