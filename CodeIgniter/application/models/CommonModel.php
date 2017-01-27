@@ -21,7 +21,7 @@ class CommonModel extends CI_Model{
         $result = $this->db->query($query);        
         if($result->num_rows() > 0) {
             $row = $result->row();
-            return $row['PROFILE_ID'];            
+            return $row->PROFILE_ID;            
         }
         return FALSE;
     }
@@ -41,8 +41,8 @@ class CommonModel extends CI_Model{
         $result = $this->db->query($query);
         if($result->num_rows() > 0) {
             $row = $result->row();
-            if($pass_hash == $row['PASS_HASH']) {                
-                return $row['PROFILE_ID'];
+            if($pass_hash == $row->PASS_HASH) {
+                return $row->PROFILE_ID;
             } else {
                 return 0; //password didn't matched
             }
