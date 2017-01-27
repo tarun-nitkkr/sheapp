@@ -40,7 +40,7 @@ class CommonLib {
     
     
     public function updateChecksum($userId) {
-        $salt = mcrypt_create_iv(50);
+        $salt = uniqid(mt_rand(), true);
         $salt .= time();
         $checksum = hash('sha1', $salt);
         $result = $this->commonModel->updateChecksum($userId, $checksum);
