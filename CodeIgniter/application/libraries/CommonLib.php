@@ -20,15 +20,20 @@ class CommonLib {
     public function loginUser($username, $password) {
         $pass_hash = hash('sha256', $password);
         $userId = $this->commonModel->authenticateUser($username, $pass_hash);
-        if(!$userId) {
+        if($userId == 0) {
             global $ERROR_CODE;
             $ERROR_CODE = '40';
-            throw new Exception("Authentication Failure");
+            throw new Exception("Authentication Failure: Credentials mismatch");
+        }
+        if($userId == -1) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '41';
+            throw new Exception("Authentication Failure: No such username found");
         }
         global $USER_ID;
         $USER_ID = $userId;
         $checksum = $this->updateChecksum($userId);
-        
+        return [ 'CHECKSUM' => $checksum];
     }
     
     

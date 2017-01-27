@@ -50,6 +50,7 @@ class Api extends CI_Controller {
         }else {
             echo $this->apiResonse->getErrorJSONResponse($USER_ID, $ERROR_CODE, $exc->getMessage());
         }        
+        exit(0);
     }
     
     
@@ -78,6 +79,18 @@ class Api extends CI_Controller {
         $this->commonLib->authenticateChecksum($checksum);
     }
     
+    
+    /**
+     * To echo/return JSON response in case of API success
+     * @global string $USER_ID
+     * @param string $data
+     */
+    private function sendOkResponse($data) {
+        global $USER_ID;
+        echo $this->apiResonse->getOkJSONResponse($USER_ID, $data);
+        exit(0);
+    }
+    
     /**
      * API to login the user
      * RETURNS checksum
@@ -86,7 +99,8 @@ class Api extends CI_Controller {
         try {
             $username = $this->getXssCleanedInput('USERNAME');
             $password = $this->getXssCleanedInput('PASSWORD');
-            $this->commonLib->loginUser($username, $password);
+            $data = $this->commonLib->loginUser($username, $password);
+            $this->sendOkResponse($data);
         } catch (Exception $exc) {
             $this->handleException($exc);
         }
@@ -97,21 +111,7 @@ class Api extends CI_Controller {
      * TEST API
      */
     public function test() {
-        //echo "This is test string";
-        $username = $_POST['USER_NAME'];
-        $password = $_POST['PASSWORD'];
-
-        $data = [
-            'STATUS' => 'OK',
-            'ERRORCODE' => '',
-            'MSG' => "THIS IS SAMPLE JSON",
-            'DATA' => [
-                'USERNAME' => $username,
-                'PASSWORD' => md5($password)
-            ],
-            'USERID' => '-1'
-        ];
-        echo json_encode($data);
+        $this->sendOkResponse(array());
     }
 
 }

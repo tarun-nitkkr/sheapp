@@ -37,7 +37,18 @@ class CommonModel extends CI_Model{
     
     
     public function authenticateUser($username, $pass_hash) {
-        
+        $query = "SELECT PROFILE_ID, PASS_HASH from USER_PROFILE where USERNAME = '$username'";
+        $result = $this->db->query($query);
+        if($result->num_rows() > 0) {
+            $row = $result->row();
+            if($pass_hash == $row['PASS_HASH']) {                
+                return $row['PROFILE_ID'];
+            } else {
+                return 0; //password didn't matched
+            }
+        } else {
+            return -1; //no such user found
+        }
     }
     
     
