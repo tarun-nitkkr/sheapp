@@ -31,12 +31,11 @@ class Api extends CI_Controller {
             if (!(isset($_REQUEST['USERNAME']) && isset($_REQUEST['PASSWORD']) && strpos($_SERVER['REQUEST_URI'], 'Api/login') )) {
                 $this->authenticate();
             }
-        } catch (Exception $exc) {            
+        } catch (Exception $exc) {
             $this->handleException($exc);
         }
     }
-    
-    
+
     /**
      * To handle and respond corresponding to a Exception
      * @global string $ERROR_CODE
@@ -45,16 +44,14 @@ class Api extends CI_Controller {
      */
     private function handleException($exc) {
         global $ERROR_CODE, $USER_ID;
-        if($ERROR_CODE > 100) {
+        if ($ERROR_CODE > 100) {
             echo $this->apiResonse->getFalseJSONResponse($USER_ID, $exc->getMessage());
-        }else {
+        } else {
             echo $this->apiResonse->getErrorJSONResponse($USER_ID, $ERROR_CODE, $exc->getMessage());
-        }        
+        }
         exit(0);
     }
-    
-    
-    
+
     /**
      * Get XSS cleaned input from $_REQUEST
      * @global string $ERROR_CODE
@@ -78,8 +75,7 @@ class Api extends CI_Controller {
         $checksum = $this->getXssCleanedInput('CHECKSUM');
         $this->commonLib->authenticateChecksum($checksum);
     }
-    
-    
+
     /**
      * To echo/return JSON response in case of API success
      * @global string $USER_ID
@@ -90,7 +86,7 @@ class Api extends CI_Controller {
         echo $this->apiResonse->getOkJSONResponse($USER_ID, $data);
         exit(0);
     }
-    
+
     /**
      * API to login the user
      * RETURNS checksum
@@ -106,7 +102,18 @@ class Api extends CI_Controller {
         }
     }
 
-    
+    /**
+     * API to get eligible food menu for current week i.e. (MONDAY to SUNDAY)
+     */
+    public function getFoodMenu() {
+        try {
+            $data = $this->commonLib->getFoodMenu();
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+
     /**
      * TEST API
      */

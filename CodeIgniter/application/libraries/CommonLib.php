@@ -63,4 +63,25 @@ class CommonLib {
         global $USER_ID;
         $USER_ID = $userId;
     }
+    
+    
+    
+    public function getFoodMenu() {
+        $allData = $this->commonModel->getFoodMenuFromDb();
+        //var_dump($allData);exit;
+        if(!$allData) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        $resultData = [];
+        foreach($allData as $tupple) {
+            if($tupple['IS_DEFAULT'] == 'Y' && !isset($resultData[$tupple['DAY']][$tupple['MEAL']])) {
+                $resultData[$tupple['DAY']][$tupple['MEAL']] = $tupple;
+            } else if($tupple['IS_DEFAULT'] != 'Y'){
+                $resultData[$tupple['DAY']][$tupple['MEAL']] = $tupple;
+            }
+        }
+        return $resultData;
+    }
 }
