@@ -35,6 +35,15 @@ class CommonModel extends CI_Model{
         return FALSE;
     }
     
+    public function checkChecksum($userId) {
+        $query = "SELECT CHECKSUM from USER_PROFILE where PROFILE_ID='$userId'";
+        $result = $this->db->query($query);
+        if($result && $result->num_rows() > 0) {
+            return $result->row()->CHECKSUM;
+        }
+        return FALSE;
+    }
+    
     
     public function authenticateUser($username, $pass_hash) {
         $query = "SELECT PROFILE_ID, PASS_HASH from USER_PROFILE where USERNAME = '$username'";
@@ -64,6 +73,15 @@ class CommonModel extends CI_Model{
         $result = $this->db->query($query);
         if($result && $result->num_rows() > 0) {
             return $result->result_array();
+        }
+        return FALSE;
+    }
+    
+    
+    public function invalidateChecksum($userId) {
+        $query = "UPDATE USER_PROFILE set CHECKSUM = NULL where PROFILE_ID='$userId'";
+        if($this->db->query($query)) {
+            return TRUE;
         }
         return FALSE;
     }

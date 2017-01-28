@@ -101,6 +101,19 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
+    
+    /**
+     * API to logout the user based on the USERID
+     */
+    public function logout() {
+        try {
+            $userId = $this->getXssCleanedInput('USERID');
+            $data = $this->commonLib->logoutUser($userId);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
 
     /**
      * API to get eligible food menu for current week i.e. (MONDAY to SUNDAY)

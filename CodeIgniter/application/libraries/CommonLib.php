@@ -32,8 +32,17 @@ class CommonLib {
         }
         global $USER_ID;
         $USER_ID = $userId;
-        $checksum = $this->updateChecksum($userId);
+        $checksum = $this->checkChecksum($userId);
+        if(!$checksum) {
+            $checksum = $this->updateChecksum($userId);
+        }        
         return [ 'CHECKSUM' => $checksum];
+    }
+    
+    
+    public function checkChecksum($userId) {
+        $checksum = $this->commonModel->checkChecksum($userId);
+        return $checksum;
     }
     
     
@@ -83,5 +92,22 @@ class CommonLib {
             }
         }
         return $resultData;
+    }
+    
+    
+    public function logoutUser($userId) {
+        global $USER_ID;
+        if($USER_ID != $userId) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '44';
+            throw new Exception("Not allowed to logout another user");
+        }
+        $result = $this->commonModel->invalidateChecksum($userId);
+        if(!$result) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '80';
+            throw new Exception("DB Updation failed!");
+        }
+        return [];
     }
 }
