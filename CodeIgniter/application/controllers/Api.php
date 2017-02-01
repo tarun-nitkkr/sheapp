@@ -101,7 +101,7 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
-    
+
     /**
      * API to logout the user based on the USERID
      */
@@ -121,6 +121,23 @@ class Api extends CI_Controller {
     public function getFoodMenu() {
         try {
             $data = $this->commonLib->getFoodMenu();
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+
+    /**
+     * API to update food menu
+     */
+    public function updateFoodMenu() {
+        try {
+            $dishName = $this->getXssCleanedInput('DISHNAME');
+            $date = $this->getXssCleanedInput('DATE');
+            $isDefault = $this->getXssCleanedInput('ISDEFAULT');
+            $meal = $this->getXssCleanedInput('MEAL');
+            $day = $this->getXssCleanedInput('DAY');
+            $data = $this->commonLib->updateFoodMenu($date, $dishName, $day, $meal, $isDefault);
             $this->sendOkResponse($data);
         } catch (Exception $exc) {
             $this->handleException($exc);

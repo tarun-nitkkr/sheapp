@@ -55,7 +55,7 @@ class CommonLib {
         $result = $this->commonModel->updateChecksum($userId, $checksum);
         if(!$result) {
             global $ERROR_CODE;
-            $ERROR_CODE = '41';
+            $ERROR_CODE = '42';
             throw new Exception("Checksum Updation Failed");
         }
         return $checksum;
@@ -103,6 +103,60 @@ class CommonLib {
             throw new Exception("Not allowed to logout another user");
         }
         $result = $this->commonModel->invalidateChecksum($userId);
+        if(!$result) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '80';
+            throw new Exception("DB Updation failed!");
+        }
+        return [];
+    }
+    
+    
+    public function updateFoodMenu($date, $dishName, $day, $meal, $isDefault) {
+        //validateInput
+        $dayValArr = [
+            'MONDAY',
+            'TUESDAY',
+            'WEDNESDAY',
+            'THURSDAY',
+            'FRIDAY',
+            'SATURDAY',
+            'SUNDAY'
+        ];
+        
+        $mealValArr = [
+            'BREAKFAST',
+            'DINNER'
+        ];
+        
+        $isDefaultValArr = ['Y', 'N'];       
+        
+        
+        
+        if(!in_array($meal, $mealValArr)) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid input under field: MEAL");
+        }
+        if(!in_array($day, $dayValArr)) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid input under field: DAY");
+        }
+        if(!in_array($isDefault, $isDefaultValArr)) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid input under field: ISDEFAULT");
+        }
+        if(!preg_match('/^20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/', $date)) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid input under field: DATE");
+        }
+        
+        //validate input--done
+        
+        $result = $this->commonModel->updateFoodMenuInDb($dishName, $date, $day, $meal, $isDefault);
         if(!$result) {
             global $ERROR_CODE;
             $ERROR_CODE = '80';
