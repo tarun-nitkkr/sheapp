@@ -95,14 +95,9 @@ class CommonLib {
     }
     
     
-    public function logoutUser($userId) {
-        global $USER_ID;
-        if($USER_ID != $userId) {
-            global $ERROR_CODE;
-            $ERROR_CODE = '44';
-            throw new Exception("Not allowed to logout another user");
-        }
-        $result = $this->commonModel->invalidateChecksum($userId);
+    public function logoutUser() {
+        global $USER_ID;        
+        $result = $this->commonModel->invalidateChecksum($USER_ID);
         if(!$result) {
             global $ERROR_CODE;
             $ERROR_CODE = '80';

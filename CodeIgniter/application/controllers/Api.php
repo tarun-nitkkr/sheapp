@@ -106,9 +106,8 @@ class Api extends CI_Controller {
      * API to logout the user based on the USERID
      */
     public function logout() {
-        try {
-            $userId = $this->getXssCleanedInput('USERID');
-            $data = $this->commonLib->logoutUser($userId);
+        try {            
+            $data = $this->commonLib->logoutUser();
             $this->sendOkResponse($data);
         } catch (Exception $exc) {
             $this->handleException($exc);
