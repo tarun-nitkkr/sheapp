@@ -83,6 +83,12 @@ class CommonModel extends CI_Model {
             }
         }
         
+        $deleteQuery = "DELETE FROM FOOD_MENU WHERE FOR_DATE='$date'";
+        if (!$this->db->query($deleteQuery)) {
+                return FALSE;
+        }
+        
+        
         global $USER_ID;
         $insertQuery = "INSERT INTO FOOD_MENU(FOR_DATE, DAY, DISH_NAME, MEAL, IS_DEFAULT, ENTERED_BY) VALUES('$date','$day', '$dishName', '$meal', '$isDefault','$USER_ID')";
         if (!$this->db->query($insertQuery)) {
