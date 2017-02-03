@@ -103,7 +103,7 @@ class Api extends CI_Controller {
     }
 
     /**
-     * API to logout the user based on the USERID
+     * API to logout the user based on the CHECKSUM
      */
     public function logout() {
         try {            
@@ -116,6 +116,8 @@ class Api extends CI_Controller {
 
     /**
      * API to get eligible food menu for current week i.e. (MONDAY to SUNDAY)
+     * PARAMS: none
+     * RETURNS:- dataJSON
      */
     public function getFoodMenu() {
         try {
@@ -128,6 +130,8 @@ class Api extends CI_Controller {
 
     /**
      * API to update food menu
+     * PARAMS: DISHNAME, DATE, DAY, ISDEFAULT, MEAL
+     * RETURN: empty response
      */
     public function updateFoodMenu() {
         try {
@@ -137,6 +141,21 @@ class Api extends CI_Controller {
             $meal = $this->getXssCleanedInput('MEAL');
             $day = $this->getXssCleanedInput('DAY');
             $data = $this->commonLib->updateFoodMenu($date, $dishName, $day, $meal, $isDefault);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+    
+    
+    /**
+     * API to get all Lists i.e. even completed lists
+     * PARAMS: none
+     * RETURNS dataJSON
+     */
+    public function getAllLists() {
+        try {
+            $data = $this->commonLib->getAllLists();
             $this->sendOkResponse($data);
         } catch (Exception $exc) {
             $this->handleException($exc);

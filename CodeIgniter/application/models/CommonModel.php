@@ -11,7 +11,7 @@ class CommonModel extends CI_Model {
     }
 
     public function authenticateChecksum($checksum) {
-        $query = "SELECT PROFILE_ID from USER_PROFILE where CHECKSUM = '$checksum'";
+        $query = "SELECT PROFILE_ID from USER_PROFILE where CHECKSUM = '$checksum' AND IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             $row = $result->row();
@@ -29,7 +29,7 @@ class CommonModel extends CI_Model {
     }
 
     public function checkChecksum($userId) {
-        $query = "SELECT CHECKSUM from USER_PROFILE where PROFILE_ID='$userId'";
+        $query = "SELECT CHECKSUM from USER_PROFILE where PROFILE_ID='$userId' AND IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             return $result->row()->CHECKSUM;
@@ -38,7 +38,7 @@ class CommonModel extends CI_Model {
     }
 
     public function authenticateUser($username, $pass_hash) {
-        $query = "SELECT PROFILE_ID, PASS_HASH from USER_PROFILE where USERNAME = '$username'";
+        $query = "SELECT PROFILE_ID, PASS_HASH from USER_PROFILE where USERNAME = '$username' AND IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             $row = $result->row();
@@ -59,7 +59,7 @@ class CommonModel extends CI_Model {
         $dateMonday = date('Y-m-d', strtotime('last monday'));
         $dateSunday = date('Y-m-d', strtotime('next sunday'));
         //echo $dateMonday.'-----'.$dateSunday;exit;
-        $query = "SELECT * FROM FOOD_MENU where IS_DEFAULT='Y' OR (FOR_DATE BETWEEN '$dateMonday' AND '$dateSunday')";
+        $query = "SELECT * FROM FOOD_MENU where (IS_DEFAULT='Y' OR (FOR_DATE BETWEEN '$dateMonday' AND '$dateSunday')) AND IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             return $result->result_array();
@@ -96,6 +96,16 @@ class CommonModel extends CI_Model {
         }
 
         return TRUE;
+    }
+    
+    
+    public function getAllListsFromDb() {
+        $query = "SELECT SL.TITLE, LI.*  FROM SHOPPING_LIST SL JOIN LIST_ITEM LI ON LI.LIST_ID = SL.ID WHERE SL.IS_ACTIVE='Y' AND LI.IS_ACTIVE='Y' ORDER BY SL.CREATED_ON DESC";
+        $result = $this->db->query($query);
+        if($result && $result->num_rows() > 0) {
+            return $result->result_array();
+        }
+        return FALSE;
     }
 
 }

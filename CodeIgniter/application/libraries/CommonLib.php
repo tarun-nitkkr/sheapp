@@ -159,4 +159,22 @@ class CommonLib {
         }
         return [];
     }
+    
+    
+    
+    public function getAllLists() {
+        $data = $this->commonModel->getAllListsFromDb();
+        if(!$data) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        $result = [];
+        foreach ($data as $tupple) { 
+            $result[$tupple['LIST_ID']]['TITLE'] = $tupple['TITLE'];
+            $result[$tupple['LIST_ID']]['LIST_ITEMS'][$tupple['ITEM']] = $tupple;
+        }
+        
+        return $result;
+    }
 }
