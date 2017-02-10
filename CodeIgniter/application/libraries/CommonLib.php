@@ -170,10 +170,18 @@ class CommonLib {
             throw new Exception("No data found/query failed!");
         }
         $result = [];
-        foreach ($data as $tupple) { 
+        foreach ($data as $tupple) {
+            if(!isset($result[$tupple['LIST_ID']])) {
+                $result[$tupple['LIST_ID']]['TITLE'] = $tupple['TITLE'];
+                $result[$tupple['LIST_ID']]['LIST_ITEMS'][$tupple['ITEM']] = $tupple;
+                $result[$tupple['LIST_ID']]['LAST_MODIFIED'] = $tupple['LAST_MODIFIED'];
+                $result[$tupple['LIST_ID']]['LAST_MODIFIED_BY'] = $tupple['IS_BOUGHT'] == 'Y' ? $tupple['BOUGHT_BY_NAME'] : $tupple['REQUESTED_BY_NAME'];
+                continue;
+                
+            }
             $result[$tupple['LIST_ID']]['TITLE'] = $tupple['TITLE'];
             $result[$tupple['LIST_ID']]['LIST_ITEMS'][$tupple['ITEM']] = $tupple;
-        }
+        }        
         
         return $result;
     }

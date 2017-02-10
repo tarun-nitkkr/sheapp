@@ -100,7 +100,8 @@ class CommonModel extends CI_Model {
     
     
     public function getAllListsFromDb() {
-        $query = "SELECT SL.TITLE, LI.*  FROM SHOPPING_LIST SL JOIN LIST_ITEM LI ON LI.LIST_ID = SL.ID WHERE SL.IS_ACTIVE='Y' AND LI.IS_ACTIVE='Y' ORDER BY SL.CREATED_ON DESC";
+        $query = "SELECT SL.TITLE, LI.* , UP1.NAME as REQUESTED_BY_NAME, UP2.NAME as BOUGHT_BY_NAME  FROM SHOPPING_LIST SL JOIN LIST_ITEM LI ON LI.LIST_ID = SL.ID JOIN USER_PROFILE UP1 ON UP1.PROFILE_ID = LI.REQUESTED_BY LEFT JOIN USER_PROFILE UP2 on UP2.PROFILE_ID = LI.BOUGHT_BY WHERE SL.IS_ACTIVE='Y' AND LI.IS_ACTIVE='Y' ORDER BY SL.CREATED_ON, LI.LAST_MODIFIED DESC";
+        //echo $query;exit;
         $result = $this->db->query($query);
         if($result && $result->num_rows() > 0) {
             return $result->result_array();
