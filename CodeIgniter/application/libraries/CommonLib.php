@@ -185,4 +185,22 @@ class CommonLib {
         
         return $result;
     }
+    
+    
+    public function getFilteredLists() {
+        $data = $this->commonModel->getAllListsFromDb();
+        if(!$data) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        $result = [];
+        foreach($data as $tupple) {
+            $result[$tupple['TYPE']][] = $tupple;
+        }
+        //var_dump($result);exit;
+        return $result;
+    }
+            
+    
 }

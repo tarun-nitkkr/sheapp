@@ -161,6 +161,20 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
+    
+    /**
+     * API to get filtered lists i.e. ['STAPLES' : [array of items], 'UTILITIES': [array of items],...]
+     * PARAMS:- none
+     */
+    public function getFilteredLists() {
+        try {
+            $data = $this->commonLib->getFilteredLists();
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+    
 
     /**
      * TEST API
