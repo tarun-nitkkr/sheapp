@@ -173,6 +173,7 @@ class CommonLib {
         foreach ($data as $tupple) {
             if(!isset($result[$tupple['LIST_ID']])) {
                 $result[$tupple['LIST_ID']]['TITLE'] = $tupple['TITLE'];
+                $result[$tupple['LIST_ID']]['LIST_ID'] = $tupple['LIST_ID'];
                 $result[$tupple['LIST_ID']]['LIST_ITEMS'][$tupple['ITEM']] = $tupple;
                 $result[$tupple['LIST_ID']]['LAST_MODIFIED'] = $tupple['LAST_MODIFIED'];
                 $result[$tupple['LIST_ID']]['LAST_MODIFIED_BY'] = $tupple['IS_BOUGHT'] == 'Y' ? $tupple['BOUGHT_BY_NAME'] : $tupple['REQUESTED_BY_NAME'];
@@ -180,6 +181,7 @@ class CommonLib {
                 
             }
             $result[$tupple['LIST_ID']]['TITLE'] = $tupple['TITLE'];
+            $result[$tupple['LIST_ID']]['LIST_ID'] = $tupple['LIST_ID'];
             $result[$tupple['LIST_ID']]['LIST_ITEMS'][$tupple['ITEM']] = $tupple;
         }        
         
@@ -201,6 +203,19 @@ class CommonLib {
         //var_dump($result);exit;
         return $result;
     }
+      
+    
+    
+    public function updateList($list) {
+        if(!isset($list['ID'])) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid JSON");
+        }
+        if($list['ID'] == -1) {
             
+        }
+    }
+    
     
 }
