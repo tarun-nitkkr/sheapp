@@ -195,12 +195,12 @@ class CommonLib {
 
     public function updateList($list) {
         global $USER_ID;
-        if (!isset($list['ID'])) {
+        if (!isset($list['LIST_ID'])) {
             global $ERROR_CODE;
             $ERROR_CODE = '62';
             throw new Exception("Not a valid JSON");
         }
-        if ($list['ID'] == -1) {
+        if ($list['LIST_ID'] == -1) {
             //create a new list
             $tableName = 'SHOPPING_LIST';
             $dataArr = [];
@@ -212,7 +212,7 @@ class CommonLib {
             $LIST_ID = $lastTupple[0]['ID'];
             //now insert items one by one from the JSON
             unset($tableName);
-            $tableName = 'LIST_ITEMS';
+            $tableName = 'LIST_ITEM';
             $itemsArr = $list['ITEMS'];
             foreach ($itemsArr as $index => $item) {
                 unset($dataArr);
@@ -220,7 +220,8 @@ class CommonLib {
                 $dataArr['TYPE'] = $item['TYPE'];
                 $dataArr['REQUESTED_BY'] = $USER_ID;
                 $dataArr['ITEM'] = $item['TITLE'];
-                $dataArr['REQUESTED_ON'] = date('Y-m-d H:i:s', time());
+                $dataArr['LAST_MODIFIED'] = date('Y-m-d H:i:s', time());
+                $dataArr['REQUESTED_ON'] = $dataArr['LAST_MODIFIED'];
                 if ($item['IS_BOUGHT'] == 'Y') {
                     $dataArr['IS_BOUGHT'] = $item['IS_BOUGHT'];
                     $dataArr['BOUGHT_BY'] = $USER_ID;
@@ -239,7 +240,7 @@ class CommonLib {
 
             //now update/insert items
             unset($tableName);
-            $tableName = 'LIST_ITEMS';
+            $tableName = 'LIST_ITEM';
             $itemsArr = $list['ITEMS'];
             foreach ($itemsArr as $index => $item) {
 
@@ -254,7 +255,8 @@ class CommonLib {
                     $dataArr['TYPE'] = $item['TYPE'];
                     $dataArr['REQUESTED_BY'] = $USER_ID;
                     $dataArr['ITEM'] = $item['TITLE'];
-                    $dataArr['REQUESTED_ON'] = date('Y-m-d H:i:s', time());
+                    $dataArr['LAST_MODIFIED'] = date('Y-m-d H:i:s', time());
+                    $dataArr['REQUESTED_ON'] = $dataArr['LAST_MODIFIED'];
                     if ($item['IS_BOUGHT'] == 'Y') {
                         $dataArr['IS_BOUGHT'] = $item['IS_BOUGHT'];
                         $dataArr['BOUGHT_BY'] = $USER_ID;
@@ -273,6 +275,7 @@ class CommonLib {
                             $dataArr['BOUGHT_ON'] = date('Y-m-d', time());
                         }
                     }
+                    //var_dump($dataArr);exit;
                     $this->commonModel->updateListItem($ITEM_ID, $dataArr);
                 }
             }
