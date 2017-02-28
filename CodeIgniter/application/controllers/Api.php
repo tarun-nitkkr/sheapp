@@ -175,6 +175,18 @@ class Api extends CI_Controller {
         }
     }
     
+    
+    public function updateList() {
+        try {
+            $listJson = $this->getXssCleanedInput('LIST_JSON');
+            $listArr = json_decode(stripslashes($listJson), true);
+            $data = $this->commonLib->updateList($listArr);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+    
 
     /**
      * TEST API
