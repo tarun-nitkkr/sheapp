@@ -83,7 +83,7 @@ class CommonModel extends CI_Model {
             }
         }
 
-        $deleteQuery = "DELETE FROM FOOD_MENU WHERE FOR_DATE='$date'";
+        $deleteQuery = "DELETE FROM FOOD_MENU WHERE FOR_DATE='$date' AND DAY='$day' AND MEAL='$meal' AND IS_DEFAULT = 'N'";
         if (!$this->db->query($deleteQuery)) {
             return FALSE;
         }
