@@ -297,6 +297,9 @@ class CommonLib {
         if ($is_done) {
             $updateSet['IS_DONE'] = 'Y';
             $this->commonModel->updateShoppingList($listId, $updateSet);
+        } else {
+            $updateSet['IS_DONE'] = 'N';
+            $this->commonModel->updateShoppingList($listId, $updateSet);
         }
     }
 
