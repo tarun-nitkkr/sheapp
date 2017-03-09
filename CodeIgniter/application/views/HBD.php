@@ -129,7 +129,7 @@ body{
     <p class="line-2 anim-typewriter8" style="font-size:160%; color: pink;">HAPPY WOMEN'S DAY, SWEETHEART</p>
     
     
-        <img src="img_bike.jpg">
+        <img src="/SHEapp/img_bike.jpg">
     
   </body>
 </html>
