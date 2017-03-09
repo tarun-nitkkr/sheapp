@@ -198,7 +198,7 @@ hr{
         <h2 class='login_title text-center'>Login</h2>
         <hr>
 
-        <form class="form-signin" action="/Api/loginHWD" method="post">
+        <form class="form-signin" action="/SHEapp/Api/loginHWD" method="post">
                 <span id="reauth-email" class="reauth-email"></span>
                 <p class="input_title">Username</p>
                 <input type="text" id="inputEmail" name="USERNAME" class="login_box" placeholder="your name maybe" required autofocus>
@@ -215,26 +215,5 @@ hr{
     </div><!-- /container -->
 
 </body>
-<script>
-    function login() {
-        var uname = $("#userName").val();
-        var pass = $("#userPassword").val();
-        $.ajax({
-            type: "POST",
-            url: "/Api/loginHWD",
-            data: {
-                USERNAME: uname,
-                PASSWORD: pass
-            },
-            dataType: 'JSON',
-            success: function (data, textStatus, jqXHR) {
-                if (data.STATUS) {
-                    $("#searchResult").html(data.MSG);
-                }
 
-            }
-
-        });
-    }
-    </script>
 </html>

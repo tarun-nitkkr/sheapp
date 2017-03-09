@@ -13,7 +13,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   min-width: 1024px;
 }*/
 /* Google Fonts */
-@import url(http://fonts.googleapis.com/css?family=Anonymous+Pro);
+@import url(https://fonts.googleapis.com/css?family=Anonymous+Pro);
 
 /* Global */
 html{
@@ -129,7 +129,7 @@ body{
     <p class="line-2 anim-typewriter8" style="font-size:160%; color: pink;">HAPPY WOMEN'S DAY, SWEETHEART</p>
     
     
-        <img src="/SHEapp/img_bike.jpg">
+        <img src="/test/img_bike.jpg">
     
   </body>
 </html>

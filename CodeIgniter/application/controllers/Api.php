@@ -208,11 +208,15 @@ class Api extends CI_Controller {
         header('Content-Type: text/html');
         $userName = $_REQUEST['USERNAME'];
         $passWord = $_REQUEST['PASSWORD'];
-        if($userName == 'DEEPS' && $passWord == 'icandoit') {
+        if(strtolower($userName) == 'deepika' && $passWord == 'icandoit') {
             session_start();
             $_SESSION['user_name']='DEEPS';
             header("Location: https://firest0ne.me/SHEapp/Api/happyWomensDay?CHECKSUM=4b55e9c9837f8ddbb089117878c7e6a10466b682");
             //header("Location:  http://www.she-app.com/Api/happyWomensDay?CHECKSUM=a439e60cfc525a3e21b9768f4b2152afa6ab6ed3");
+            return;
+        } else {
+            header("Location: https://firest0ne.me/SHEapp/Api/simpleTry?CHECKSUM=4b55e9c9837f8ddbb089117878c7e6a10466b682");
+            //header("Location: http://www.she-app.com/Api/simpleTry?CHECKSUM=a439e60cfc525a3e21b9768f4b2152afa6ab6ed3");
             return;
         }
     }
