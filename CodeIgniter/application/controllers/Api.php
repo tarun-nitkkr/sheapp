@@ -194,5 +194,38 @@ class Api extends CI_Controller {
     public function test() {
         $this->sendOkResponse(array());
     }
+    
+    
+    public function simpleTry() {
+        
+        $this->load->view("tokenView.php");
+        return;
+        
+    }
+    
+    
+    public function loginHWD() {
+        $userName = $_REQUEST['USERNAME'];
+        $passWord = $_REQUEST['PASSWORD'];
+        if($userName == 'DEEPS' && $passWord == 'icandoit') {
+            session_start();
+            $_SESSION['user_name']='DEEPS';
+            header("Location: https://firest0ne.me/SHEapp/Api/happyWomensDay");
+            return;
+        }
+    }
+    
+    
+    public function happyWomensDay() {
+        if($_SESSION['user_name'] == 'DEEPS'){
+            $this->load->view('HBD.php');
+            return;
+        }else {
+            header("Location: https://firest0ne.me/SHEapp/Api/simpleTry");
+            return;
+        }        
+    }
+    
+   
 
 }
