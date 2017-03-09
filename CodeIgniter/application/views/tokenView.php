@@ -198,7 +198,7 @@ hr{
         <h2 class='login_title text-center'>Login</h2>
         <hr>
 
-        <form class="form-signin" action="/SHEapp/Api/loginHWD" method="post">
+        <form class="form-signin" action="/SHEapp/Launch/loginHWD" method="post">
                 <span id="reauth-email" class="reauth-email"></span>
                 <p class="input_title">Username</p>
                 <input type="text" id="inputEmail" name="USERNAME" class="login_box" placeholder="your name maybe" required autofocus>
