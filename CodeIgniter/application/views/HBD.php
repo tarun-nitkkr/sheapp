@@ -135,10 +135,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </head>
     <body>
         <p class="line-1 anim-typewriter">They say behind every successful man, there is a WOMAN,</p>
-        <p class="line-2 anim-typewriter2">But behind this man there is a successful WOMAN.</p>
+        <p class="line-2 anim-typewriter2">But behind this man, there is a successful WOMAN.</p>
         <p class="line-2 anim-typewriter3">I would like to use this opportunity to tell you something which is true, </p>
         <p class="line-2 anim-typewriter4" style="font-size:140%; color:rgb(33, 255, 33);">"You are an amazing person having wonderful capabilities which even you are not aware of,</p>
-        <p class="line-2 anim-typewriter5" style="font-size:140%; color:rgb(33, 255, 33);">you can acheive anything you want,</p>
+        <p class="line-2 anim-typewriter5" style="font-size:140%; color:rgb(33, 255, 33);">you can achieve anything you want,</p>
         <p class="line-2 anim-typewriter6" style="font-size:140%; color:rgb(33, 255, 33);">you just need a sincere motivation and a fearless momentum.</p>
         <p class="line-2 anim-typewriter7" style="font-size:140%; color:rgb(33, 255, 33);">So follow your dreams and make them come true".</p>
         <p class="line-2 anim-typewriter8" style="font-size:160%; color: pink;">HAPPY WOMEN'S DAY, SWEETHEART</p>
