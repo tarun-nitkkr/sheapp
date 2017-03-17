@@ -266,6 +266,7 @@ class CommonLib {
                 } else {
                     $ITEM_ID = $item['ID'];
                     $dataArr['ITEM'] = $item['TITLE'];
+                    $dataArr['TYPE'] = $item['TYPE'];
                     if ($item['IS_BOUGHT'] == 'Y') {
                         //check if already bought
                         $isBoughtData = $this->commonModel->getBoughtStatusOfItem($ITEM_ID);
