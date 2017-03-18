@@ -195,5 +195,37 @@ class CommonModel extends CI_Model {
         }
         return FALSE;
     }
-
+    
+    
+    public function updateNotificationToken($token,$userId) {
+        $query = "SELECT * from NOTIFICATION_TOKEN where PROFILE_ID = $userId";
+        $result = $this->db->query($query);
+        if ($result && $result->num_rows() > 0) {
+            $row = $result->row_array();
+            if($row['NOTIFICATION_TOKEN'] == $token){
+                return true;
+            } else {
+                //update TOKEN
+                unset($query);
+                unset($result);
+                $query = "UPDATE NOTIFICATION_TOKEN set NOTIFICATION_TOKEN = '$token' WHERE PROFILE_ID= $userId";
+                $result = $this->db->query($query);
+                if($result) {
+                    return true;
+                }
+                return false;
+            }
+        } else {
+            //insert TOKEN
+            unset($query);
+            unset($result);
+            $query = "INSERT INTO NOTIFICATION_TOKEN (PROFILE_ID, NOTIFICATION_TOKEN) VALUES($userId, '$token')";
+            $result = $this->db->query($query);
+            if($result) {
+                return true;
+            }
+            return false;
+        }        
+        
+    }
 }

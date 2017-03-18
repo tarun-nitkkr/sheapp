@@ -229,7 +229,6 @@ class CommonLib {
                 }
                 $this->commonModel->insertIntoTableGeneric($tableName, $dataArr);
             }
-            
         } else {
             //old list
             //overwrite list title
@@ -303,5 +302,54 @@ class CommonLib {
             $this->commonModel->updateShoppingList($listId, $updateSet);
         }
     }
+    
+    
+    
+    public function updateNotificationToken($token) {
+        global $USER_ID;
+        $status = $this->commonModel->updateNotificationToken($token, $USER_ID);
+        if(!$status) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        
+        return [];
+        
+    }
 
+    //##################### NOTIFICATION ############################
+    
+   
+    
+    public function sendNotification($ids, $data) {
+
+        $url = 'https://fcm.googleapis.com/fcm/send';
+
+        $fields = array(
+            'registration_ids' => $ids,
+            'data' => $data
+        );
+        $fields = json_encode($fields);
+
+        
+        
+        $headers = array(
+            'Authorization: key=' . "YOUR_KEY_HERE",
+            'Content-Type: application/json'
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+
+        $result = curl_exec($ch);
+        echo $result;
+        curl_close($ch);
+    }
+
+    //##################### NOTIFICATION ############################
 }

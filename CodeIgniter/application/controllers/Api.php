@@ -106,7 +106,7 @@ class Api extends CI_Controller {
      * API to logout the user based on the CHECKSUM
      */
     public function logout() {
-        try {            
+        try {
             $data = $this->commonLib->logoutUser();
             $this->sendOkResponse($data);
         } catch (Exception $exc) {
@@ -146,8 +146,7 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
-    
-    
+
     /**
      * API to get all Lists i.e. even completed lists
      * PARAMS: none
@@ -161,7 +160,7 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
-    
+
     /**
      * API to get filtered lists i.e. ['STAPLES' : [array of items], 'UTILITIES': [array of items],...]
      * PARAMS:- none
@@ -174,8 +173,7 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
-    
-    
+
     public function updateList() {
         try {
             $listJson = $this->getXssCleanedInput('LIST_JSON');
@@ -187,13 +185,30 @@ class Api extends CI_Controller {
         }
     }
     
+    
+    public function setNotificationToken() {
+        try {
+            $token = $this->getXssCleanedInput('TOKEN');
+            $data = $this->commonLib->updateNotificationToken($token);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
 
     /**
      * TEST API
      */
     public function test() {
         $this->sendOkResponse(array());
-    }    
-   
+    }
+
+//    public function dumpKey() {
+//        $key = $_REQUEST['KEY'];
+//        $file = fopen('key_dump.txt', "a");
+//        fwrite($file, "Time:-" . date("Y-m-d h:i:sa") . "#### KEY:" . $key);
+//        fclose($file);
+//        $this->sendOkResponse(['dir' => getcwd()]);
+//    }
 
 }
