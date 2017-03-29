@@ -317,6 +317,29 @@ class CommonLib {
         return [];
         
     }
+    
+    
+    
+    public function getAbsentDays($empId, $month) {
+        $data = $this->commonModel->getAbsentDays($empId, $month);
+        if(!$data) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        return $data;
+    }
+    
+    
+    public function getEmployeeDetails() {
+        $data = $this->commonModel->getEmployeeDetails();
+        if(!$data) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        return $data;
+    }
 
     //##################### NOTIFICATION ############################
     
@@ -325,17 +348,20 @@ class CommonLib {
     public function sendNotification($ids, $data) {
 
         $url = 'https://fcm.googleapis.com/fcm/send';
-
+        
         $fields = array(
             'registration_ids' => $ids,
             'data' => $data
         );
         $fields = json_encode($fields);
 
-        
+        $serverKey = $this->commonModel->getFcmServerKey();
+        if(!$serverKey) {
+            return FALSE;
+        }
         
         $headers = array(
-            'Authorization: key=' . "YOUR_KEY_HERE",
+            'Authorization: key=' . $serverKey,
             'Content-Type: application/json'
         );
 

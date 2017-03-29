@@ -228,4 +228,37 @@ class CommonModel extends CI_Model {
         }        
         
     }
+    
+    
+    
+    public function getFcmServerKey() {
+        $query = "SELECT VALUE FROM MISC_DATA where DATA_KEY='FCM_SERVER_KEY'";
+        $result = $this->db->query($query);
+        if($result && $result->num_rows() > 0) {
+            $row = $result->row_array();
+            return $row['VALUE'];
+        }
+        return false;
+    }
+    
+    
+    
+    public function getAbsentDays($empId, $month) {
+        $query = "SELECT DATE, SHIFT, REASON, STATUS, ACTED_BY, REPORTED_BY from ABSENT_LOG where EID = $empId AND MONTH(DATE) = '$month'";
+        $result = $this->db->query($query);
+        if ($result && $result->num_rows() > 0) {
+            return $result->result_array();
+        }
+        return FALSE;
+    }
+    
+    
+    public function getEmployeeDetails() {
+        $query = "SELECT * from EMPLOYEE_PROFILE";
+        $result = $this->db->query($query);
+        if ($result && $result->num_rows() > 0) {
+            return $result->result_array();
+        }
+        return FALSE;
+    }
 }

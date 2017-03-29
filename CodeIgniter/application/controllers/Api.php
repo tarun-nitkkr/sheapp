@@ -195,7 +195,30 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
-
+    
+    
+    
+    public function getAbsentDays() {
+        try {
+            $month = $this->getXssCleanedInput('MONTH');
+            $empId = $this->getXssCleanedInput('EMP_ID');
+            $data = $this->commonLib->getAbsentDays($empId, $month);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+    
+    
+    
+    public function getEmployeeDetails() {
+        try {            
+            $data = $this->commonLib->getEmployeeDetails();
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
     /**
      * TEST API
      */
