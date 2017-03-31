@@ -244,7 +244,7 @@ class CommonModel extends CI_Model {
     
     
     public function getAbsentDays($empId, $month) {
-        $query = "SELECT AL.DATE, AL.SHIFT, AL.REASON, AL.STATUS, UP2.NAME AS ACTED_BY, UP1.NAME AS REPORTED_BY from ABSENT_LOG AL JOIN USER_PROFILE UP1 ON UP1.PROFILE_ID = AL.REPORTED_BY LEFT JOIN USER_PROFILE UP2 on UP2.PROFILE_ID = AL.ACTED_BY where AL.EID = $empId AND MONTH(AL.DATE) = '$month'";
+        $query = "SELECT AL.ID, AL.DATE, AL.SHIFT, AL.REASON, AL.STATUS, UP2.NAME AS ACTED_BY, UP1.NAME AS REPORTED_BY from ABSENT_LOG AL JOIN USER_PROFILE UP1 ON UP1.PROFILE_ID = AL.REPORTED_BY LEFT JOIN USER_PROFILE UP2 on UP2.PROFILE_ID = AL.ACTED_BY where AL.EID = $empId AND MONTH(AL.DATE) = '$month'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             return $result->result_array();
@@ -260,5 +260,24 @@ class CommonModel extends CI_Model {
             return $result->result_array();
         }
         return FALSE;
+    }
+    
+    
+    
+    public function reportAbsent($empId, $date, $shift, $reason, $userId) {
+        $query = "SELECT 1 from ABSENT_LOG where EID=$empId and DATE='$date' and SHIFT='$shift'";
+        $result = $this->db->query($query);
+        if ($result && $result->num_rows() > 0) {
+            return TRUE;
+        }
+        
+        unset($result);
+        $insertQuery = "INSERT INTO ABSENT_LOG(EID, DATE, SHIFT, REASON, REPORTED_BY) values ($empId,'$date','$shift','$reason','$userId')";
+        $result = $this->db->query($insertQuery);
+        if ($result) {
+            return TRUE;
+        } 
+        return FALSE;
+        
     }
 }

@@ -340,6 +340,36 @@ class CommonLib {
         }
         return $data;
     }
+    
+    
+    
+    public function reportAbsent($date, $shift, $empId, $reason) {        
+        $shiftValArr = [
+            'MORNING',
+            'EVENING'
+        ];
+
+        if (!in_array($shift, $shiftValArr)) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid input under field: SHIFT");
+        }
+        if (!preg_match('/^20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/', $date)) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid input under field: DATE");
+        }
+        
+        global $USER_ID;        
+        $status = $this->commonModel->reportAbsent($empId, $date, $shift, $reason, $USER_ID);
+        if(!$status) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        
+        return [];       
+    }
 
     //##################### NOTIFICATION ############################
     

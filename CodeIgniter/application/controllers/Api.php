@@ -219,6 +219,36 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
+    
+    
+    public function removeAbsentEntry() {
+        try {
+            $month = $this->getXssCleanedInput('MONTH');
+            $empId = $this->getXssCleanedInput('EMP_ID');
+            $data = $this->commonLib->getAbsentDays($empId, $month);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+    
+    
+    public function reportAbsentEntry() {
+        try {
+            $date = $this->getXssCleanedInput('DATE');
+            $shift = $this->getXssCleanedInput('SHIFT');
+            $empId = $this->getXssCleanedInput('EMP_ID');
+            $reason = $this->getXssCleanedInput('REASON');
+            $data = $this->commonLib->reportAbsent($date, $shift, $empId, $reason);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+    
+    public function markAbsentEntryReported() {
+        
+    }
     /**
      * TEST API
      */
