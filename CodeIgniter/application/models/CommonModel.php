@@ -281,4 +281,14 @@ class CommonModel extends CI_Model {
         return FALSE;
         
     }
+    
+    
+    public function deleteAbsentEntry($id) {
+        $query = "DELETE FROM ABSENT_LOG where ID=$id" ;
+        $result = $this->db->query($query);
+        if ($result) {
+            return TRUE;
+        } 
+        return FALSE;
+    }
 }

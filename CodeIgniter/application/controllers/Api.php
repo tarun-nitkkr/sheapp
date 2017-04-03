@@ -223,9 +223,8 @@ class Api extends CI_Controller {
     
     public function removeAbsentEntry() {
         try {
-            $month = $this->getXssCleanedInput('MONTH');
-            $empId = $this->getXssCleanedInput('EMP_ID');
-            $data = $this->commonLib->getAbsentDays($empId, $month);
+            $id = $this->getXssCleanedInput('ID');
+            $data = $this->commonLib->removeAbsentEntry($id);
             $this->sendOkResponse($data);
         } catch (Exception $exc) {
             $this->handleException($exc);

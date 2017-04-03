@@ -365,7 +365,7 @@ class CommonLib {
 
     public function reportAbsentRange($inputData, $empId, $reason) {
         global $USER_ID;
-        
+
         $shiftValArr = [
             'MORNING',
             'EVENING'
@@ -404,6 +404,17 @@ class CommonLib {
             }
         }
 
+        return [];
+    }
+
+    public function removeAbsentEntry($id) {
+        $status = $this->commonModel->deleteAbsentEntry($id);
+        if (!$status) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        
         return [];
     }
 
