@@ -302,48 +302,40 @@ class CommonLib {
             $this->commonModel->updateShoppingList($listId, $updateSet);
         }
     }
-    
-    
-    
+
     public function updateNotificationToken($token) {
         global $USER_ID;
         $status = $this->commonModel->updateNotificationToken($token, $USER_ID);
-        if(!$status) {
+        if (!$status) {
             global $ERROR_CODE;
             $ERROR_CODE = '120';
             throw new Exception("No data found/query failed!");
         }
-        
+
         return [];
-        
     }
-    
-    
-    
+
     public function getAbsentDays($empId, $month) {
         $data = $this->commonModel->getAbsentDays($empId, $month);
-        if(!$data) {
+        if (!$data) {
             global $ERROR_CODE;
             $ERROR_CODE = '120';
             throw new Exception("No data found/query failed!");
         }
         return $data;
     }
-    
-    
+
     public function getEmployeeDetails() {
         $data = $this->commonModel->getEmployeeDetails();
-        if(!$data) {
+        if (!$data) {
             global $ERROR_CODE;
             $ERROR_CODE = '120';
             throw new Exception("No data found/query failed!");
         }
         return $data;
     }
-    
-    
-    
-    public function reportAbsent($date, $shift, $empId, $reason) {        
+
+    public function reportAbsent($date, $shift, $empId, $reason) {
         $shiftValArr = [
             'MORNING',
             'EVENING'
@@ -359,26 +351,70 @@ class CommonLib {
             $ERROR_CODE = '62';
             throw new Exception("Not a valid input under field: DATE");
         }
-        
-        global $USER_ID;        
+
+        global $USER_ID;
         $status = $this->commonModel->reportAbsent($empId, $date, $shift, $reason, $USER_ID);
-        if(!$status) {
+        if (!$status) {
             global $ERROR_CODE;
             $ERROR_CODE = '120';
             throw new Exception("No data found/query failed!");
         }
+
+        return [];
+    }
+
+    public function reportAbsentRange($inputData, $empId, $reason) {
+        global $USER_ID;
         
-        return [];       
+        $shiftValArr = [
+            'MORNING',
+            'EVENING'
+        ];
+
+        if (!in_array($inputData['FROM_SHIFT'], $shiftValArr) || !in_array($inputData['TO_SHIFT'], $shiftValArr)) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid input under field: SHIFT");
+        }
+        if (!preg_match('/^20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/', $inputData['FROM_DATE']) || !preg_match('/^20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/', $inputData['TO_DATE'])) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '62';
+            throw new Exception("Not a valid input under field: DATE");
+        }
+
+
+        $currDate = 0;
+        $currShift = 0;
+
+        while (!($currDate == $inputData['TO_DATE'] && $currShift == $inputData['TO_SHIFT'])) {
+            if ($currDate == 0) {
+                $currDate = $inputData['FROM_DATE'];
+                $currShift = $inputData['FROM_SHIFT'];
+            } else if ($currShift == 'MORNING') {
+                $currShift = 'EVENING';
+            } else {
+                $currDate = date('Y-m-d', strtotime($currDate . ' +1 day'));
+                $currShift = 'MORNING';
+            }
+            $status = $this->commonModel->reportAbsent($empId, $currDate, $currShift, $reason, $USER_ID);
+            if (!$status) {
+                global $ERROR_CODE;
+                $ERROR_CODE = '120';
+                throw new Exception("No data found/query failed!");
+            }
+        }
+
+        return [];
     }
 
     //##################### NOTIFICATION ############################
-    
-   
-    
+
+
+
     public function sendNotification($ids, $data) {
 
         $url = 'https://fcm.googleapis.com/fcm/send';
-        
+
         $fields = array(
             'registration_ids' => $ids,
             'data' => $data
@@ -386,10 +422,10 @@ class CommonLib {
         $fields = json_encode($fields);
 
         $serverKey = $this->commonModel->getFcmServerKey();
-        if(!$serverKey) {
+        if (!$serverKey) {
             return FALSE;
         }
-        
+
         $headers = array(
             'Authorization: key=' . $serverKey,
             'Content-Type: application/json'

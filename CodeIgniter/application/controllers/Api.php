@@ -249,6 +249,24 @@ class Api extends CI_Controller {
     public function markAbsentEntryReported() {
         
     }
+    
+    
+    public function reportAbsentRange() {
+        try {
+            $inputData = [];
+            $inputData['FROM_DATE'] = $this->getXssCleanedInput('FROM_DATE');
+            $inputData['FROM_SHIFT'] = $this->getXssCleanedInput('FROM_SHIFT');
+            $inputData['TO_DATE'] = $this->getXssCleanedInput('TO_DATE');
+            $inputData['TO_SHIFT'] = $this->getXssCleanedInput('TO_SHIFT');
+            $empId = $this->getXssCleanedInput('EMP_ID');
+            $reason = $this->getXssCleanedInput('REASON');
+            $data = $this->commonLib->reportAbsentRange($inputData, $empId, $reason);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+    
     /**
      * TEST API
      */

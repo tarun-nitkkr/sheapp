@@ -273,6 +273,7 @@ class CommonModel extends CI_Model {
         
         unset($result);
         $insertQuery = "INSERT INTO ABSENT_LOG(EID, DATE, SHIFT, REASON, REPORTED_BY) values ($empId,'$date','$shift','$reason','$userId')";
+        //echo $insertQuery;exit;
         $result = $this->db->query($insertQuery);
         if ($result) {
             return TRUE;
