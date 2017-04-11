@@ -147,6 +147,7 @@ class CommonLib {
             throw new Exception("DB Updation failed!");
         }
         
+        global $USER_ID;
         //NOTIFICATION
         $notificationData = [
             'ACTION_BY' => $this->commonModel->getUserName($USER_ID),
@@ -461,7 +462,9 @@ class CommonLib {
             throw new Exception("No data found/query failed!");
         }
         
+        global $USER_ID;
         //NOTIFICATION
+        
         $notificationData = [
             'ACTION_BY' => $this->commonModel->getUserName($USER_ID),
             'ID' => $id
