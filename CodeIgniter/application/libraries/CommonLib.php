@@ -146,6 +146,18 @@ class CommonLib {
             $ERROR_CODE = '80';
             throw new Exception("DB Updation failed!");
         }
+        
+        //NOTIFICATION
+        $notificationData = [
+            'ACTION_BY' => $this->commonModel->getUserName($USER_ID),
+            'MEAL' => $meal,
+            'DATE' => $date,
+            'DAY' => $day,
+            'DISHNAME' => $dishName,
+            'IS_DEFAULT' => $isDefault
+        ];
+        $this->generateAndSendNotificationMsg('FOOD_MENU', $notificationData);
+        
         return [];
     }
 
@@ -282,6 +294,15 @@ class CommonLib {
         }
         //update list IS_DONE status if all items are bought
         $this->updateIsDoneOfList($LIST_ID);
+        
+        //NOTIFICATION
+        $notificationData = [
+            'ACTION_BY' => $this->commonModel->getUserName($USER_ID),
+            'LIST_ID' => $list['LIST_ID'],
+            'TITLE' => $list['TITLE']
+        ];
+        $this->generateAndSendNotificationMsg('SHOPPING_LIST', $notificationData);
+        
         return [];
     }
 
@@ -359,7 +380,18 @@ class CommonLib {
             $ERROR_CODE = '120';
             throw new Exception("No data found/query failed!");
         }
-
+        
+        
+        //NOTIFICATION
+        $notificationData = [
+            'ACTION_BY' => $this->commonModel->getUserName($USER_ID),
+            'SHIFT' => $shift,
+            'DATE' => $date,
+            'ACTED_ON' => $this->commonModel->getEmployeeName($empId),
+            'REASON' => $reason
+        ];
+        $this->generateAndSendNotificationMsg('ABSENT_SINGLE', $notificationData);
+        
         return [];
     }
 
@@ -403,7 +435,21 @@ class CommonLib {
                 throw new Exception("No data found/query failed!");
             }
         }
-
+        
+        
+        //NOTIFICATION
+        $notificationData = [
+            'ACTION_BY' => $this->commonModel->getUserName($USER_ID),
+            'FROM_DATE' => $inputData['FROM_DATE'],
+            'TO_DATE' => $inputData['TO_DATE'],
+            'FROM_SHIFT' => $inputData['FROM_SHIFT'],
+            'TO_SHIFT' => $inputData['TO_SHIFT'],
+            'ACTED_ON' => $this->commonModel->getEmployeeName($empId),
+            'REASON' => $reason
+        ];
+        $this->generateAndSendNotificationMsg('ABSENT_RANGE', $notificationData);
+        
+        
         return [];
     }
 
@@ -415,14 +461,72 @@ class CommonLib {
             throw new Exception("No data found/query failed!");
         }
         
+        //NOTIFICATION
+        $notificationData = [
+            'ACTION_BY' => $this->commonModel->getUserName($USER_ID),
+            'ID' => $id
+        ];
+        $this->generateAndSendNotificationMsg('ABSENT_DELETE', $notificationData);
         return [];
     }
 
+    
+       
+    private function generateAndSendNotificationMsg($moduleName, $data) {
+        $msg= '';
+        $notificationModule = '';
+        switch ($moduleName) {
+            case 'ABSENT_SINGLE':
+                $notificationModule = 'ATTENDANCE';
+                $msg = $data['ACTION_BY']." marked a absent for ".$data['ACTED_ON']." for ".$data['DATE'].", ".$data['SHIFT']." shift because of reason: ".$data['REASON'].".";
+                break;
+            case 'ABSENT_RANGE':
+                $notificationModule = 'ATTENDANCE';
+                $msg = $data['ACTION_BY']." marked a absent for ".$data['ACTED_ON']." from ".$data['FROM_DATE'].", ".$data['FROM_SHIFT']." shift to ".$data['TO_DATE'].", ".$data['TO_SHIFT']." shift because of reason: ".$data['REASON'].".";
+                break;
+            case 'ABSENT_DELETE':
+                $notificationModule = 'ATTENDANCE';
+                $msg = $data['ACTION_BY']." deleted the marked absent against ID: ".$data['ID'].".";
+                break;
+            case 'SHOPPING_LIST' :
+                $notificationModule = 'SHOPPING_LIST';
+                if($data['LIST_ID'] == '-1') {
+                    $msg = $data['ACTION_BY'] ." added a new list with title: ". $data['TITLE']. ".";
+                } else {
+                    $msg = $data['ACTION_BY']." update the list with title: ". $data['TITLE']. ".";
+                }
+                break;
+            case 'FOOD_MENU' :
+                $notificationModule = "FOOD_MENU";
+                $msg = $data['ACTION_BY']." updated dish for ".$data['DAY']." date: ".$data['DATE']." meal: ".$data['MEAL'];
+                if($data['IS_DEFAULT'] == 'Y') {
+                    $msg .= " as ". $data['DISHNAME']." which is marked as DEFAULT.";
+                } else {
+                    $msg .= " as ". $data['DISHNAME'].".";
+                }
+                break;
+        }
+        
+        $reciepentArr = $this->commonModel->getNotificationToken();
+        $today = date('Y-m-d');
+        
+        $notificationData = [
+            'MODULE' => $notificationModule,
+            'ACTIVITIES' => [
+                [
+                    'DATE' => $today,
+                    'CONTENT' => $msg
+                ]
+            ]
+        ];
+        
+        $this->sendNotification($reciepentArr, $notificationData);
+    }
     //##################### NOTIFICATION ############################
 
 
 
-    public function sendNotification($ids, $data) {
+    private function sendNotification($ids, $data) {
 
         $url = 'https://fcm.googleapis.com/fcm/send';
 

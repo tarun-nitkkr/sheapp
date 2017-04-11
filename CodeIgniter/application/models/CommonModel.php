@@ -99,7 +99,7 @@ class CommonModel extends CI_Model {
     }
 
     public function getAllListsFromDb() {
-        $query = "SELECT SL.TITLE, SL.IS_DONE,  LI.* , UP1.NAME as REQUESTED_BY_NAME, UP2.NAME as BOUGHT_BY_NAME, UP3.NAME as CREATED_BY_NAME  FROM SHOPPING_LIST SL JOIN LIST_ITEM LI ON LI.LIST_ID = SL.ID JOIN USER_PROFILE UP1 ON UP1.PROFILE_ID = LI.REQUESTED_BY JOIN USER_PROFILE UP3 ON UP3.PROFILE_ID = SL.CREATED_BY LEFT JOIN USER_PROFILE UP2 on UP2.PROFILE_ID = LI.BOUGHT_BY WHERE SL.IS_ACTIVE='Y' AND LI.IS_ACTIVE='Y' ORDER BY SL.CREATED_ON, LI.LAST_MODIFIED DESC";
+        $query = "SELECT SL.TITLE, SL.IS_DONE,  LI.* , UP1.NAME as REQUESTED_BY_NAME, UP2.NAME as BOUGHT_BY_NAME, UP3.NAME as CREATED_BY_NAME  FROM SHOPPING_LIST SL JOIN LIST_ITEM LI ON LI.LIST_ID = SL.ID JOIN USER_PROFILE UP1 ON UP1.PROFILE_ID = LI.REQUESTED_BY JOIN USER_PROFILE UP3 ON UP3.PROFILE_ID = SL.CREATED_BY LEFT JOIN USER_PROFILE UP2 on UP2.PROFILE_ID = LI.BOUGHT_BY WHERE SL.IS_ACTIVE='Y' AND LI.IS_ACTIVE='Y' AND SL.IS_ACTIVE='Y' AND LI.IS_ACTIVE='Y' ORDER BY SL.CREATED_ON, LI.LAST_MODIFIED DESC";
         //echo $query;exit;
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
@@ -177,7 +177,7 @@ class CommonModel extends CI_Model {
     
     
     public function getBoughtStatusOfItem($itemId) {
-        $query = "select IS_BOUGHT from LIST_ITEM where ID = $itemId";
+        $query = "select IS_BOUGHT from LIST_ITEM where ID = $itemId and IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             return $result->result_array();
@@ -188,7 +188,7 @@ class CommonModel extends CI_Model {
     
     
     public function getAllItemsOfList($listId) {
-        $query = "select * from LIST_ITEM where LIST_ID = $listId";
+        $query = "select * from LIST_ITEM where LIST_ID = $listId and IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             return $result->result_array();
@@ -244,7 +244,7 @@ class CommonModel extends CI_Model {
     
     
     public function getAbsentDays($empId, $month) {
-        $query = "SELECT AL.ID, AL.DATE, AL.SHIFT, AL.REASON, AL.STATUS, UP2.NAME AS ACTED_BY, UP1.NAME AS REPORTED_BY from ABSENT_LOG AL JOIN USER_PROFILE UP1 ON UP1.PROFILE_ID = AL.REPORTED_BY LEFT JOIN USER_PROFILE UP2 on UP2.PROFILE_ID = AL.ACTED_BY where AL.EID = $empId AND MONTH(AL.DATE) = '$month'";
+        $query = "SELECT AL.ID, AL.DATE, AL.SHIFT, AL.REASON, AL.STATUS, UP2.NAME AS ACTED_BY, UP1.NAME AS REPORTED_BY from ABSENT_LOG AL JOIN USER_PROFILE UP1 ON UP1.PROFILE_ID = AL.REPORTED_BY LEFT JOIN USER_PROFILE UP2 on UP2.PROFILE_ID = AL.ACTED_BY where AL.EID = $empId AND MONTH(AL.DATE) = '$month' and AL.IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             return $result->result_array();
@@ -254,7 +254,7 @@ class CommonModel extends CI_Model {
     
     
     public function getEmployeeDetails() {
-        $query = "SELECT * from EMPLOYEE_PROFILE";
+        $query = "SELECT * from EMPLOYEE_PROFILE where IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             return $result->result_array();
@@ -265,7 +265,7 @@ class CommonModel extends CI_Model {
     
     
     public function reportAbsent($empId, $date, $shift, $reason, $userId) {
-        $query = "SELECT 1 from ABSENT_LOG where EID=$empId and DATE='$date' and SHIFT='$shift'";
+        $query = "SELECT 1 from ABSENT_LOG where EID=$empId and DATE='$date' and SHIFT='$shift' and IS_ACTIVE='Y'";
         $result = $this->db->query($query);
         if ($result && $result->num_rows() > 0) {
             return TRUE;
@@ -284,11 +284,55 @@ class CommonModel extends CI_Model {
     
     
     public function deleteAbsentEntry($id) {
-        $query = "DELETE FROM ABSENT_LOG where ID=$id" ;
+        $query = "UPDATE ABSENT_LOG set IS_ACTIVE='N' where ID=$id" ;
         $result = $this->db->query($query);
         if ($result) {
             return TRUE;
         } 
         return FALSE;
     }
+    
+    
+    public function getUserName($userId) {
+        $query = "SELECT NAME from USER_PROFILE where PROFILE_ID=$userId";
+        $result = $this->db->query($query);
+        if($result && $result->num_rows() > 0) {
+            $row = $result->row_array();
+            return $row['NAME'];
+        }
+        return false;
+    }
+    
+    public function getEmployeeName($empId) {
+        $query = "SELECT NAME from EMPLOYEE_PROFILE where EID=$empId";
+        $result = $this->db->query($query);
+        if($result && $result->num_rows() > 0) {
+            $row = $result->row_array();
+            return $row['NAME'];
+        }
+        return false;
+    }
+    
+    
+    public function getNotificationToken($exceptId = 0) {
+        if($exceptId != 0) {
+            $query = "SELECT NOTIFICATION_TOKEN from NOTIFICATION_TOKEN where PROFILE_ID != $exceptId";
+        } else {
+            $query = "SELECT NOTIFICATION_TOKEN from NOTIFICATION_TOKEN";
+        }
+        
+        $result = $this->db->query($query);
+        if($result && $result->num_rows() > 0) {
+            $tupples = $result->result_array(); 
+            //var_dump($tupples);exit;
+            foreach ($tupples as $tupple) {
+                $tokens[] = $tupple['NOTIFICATION_TOKEN'];
+            }
+            
+            return $tokens;
+        }
+        return false;
+    }
+    
+    
 }

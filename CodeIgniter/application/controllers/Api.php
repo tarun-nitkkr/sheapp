@@ -243,13 +243,8 @@ class Api extends CI_Controller {
         } catch (Exception $exc) {
             $this->handleException($exc);
         }
-    }
-    
-    public function markAbsentEntryReported() {
+    }    
         
-    }
-    
-    
     public function reportAbsentRange() {
         try {
             $inputData = [];
