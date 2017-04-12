@@ -1,6 +1,5 @@
 <?php
 
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,27 +13,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author tarun
  */
 class Launch extends CI_Controller {
+
     //put your code here
-    
+
     function __construct() {
-        parent::__construct();        
+        parent::__construct();
     }
-    
+
     public function simpleTry() {
         header('Content-Type: text/html');
         $this->load->view("tokenView.php");
         return;
-        
     }
-    
-    
+
     public function loginHWD() {
         header('Content-Type: text/html');
         $userName = $_REQUEST['USERNAME'];
         $passWord = $_REQUEST['PASSWORD'];
-        if(strtolower($userName) == 'deepika' && $passWord == 'icandoit') {
+        if (strtolower($userName) == 'deepika' && $passWord == 'icandoit') {
             session_start();
-            $_SESSION['user_name']='DEEPS';
+            $_SESSION['user_name'] = 'DEEPS';
             header("Location: https://firest0ne.me/SHEapp/Launch/happyWomensDay");
             //header("Location:  http://www.she-app.com/Api/happyWomensDay?CHECKSUM=a439e60cfc525a3e21b9768f4b2152afa6ab6ed3");
             return;
@@ -44,19 +42,101 @@ class Launch extends CI_Controller {
             return;
         }
     }
-    
-    
+
     public function happyWomensDay() {
         header('Content-Type: text/html');
         session_start();
-        if($_SESSION['user_name'] == 'DEEPS'){
+        if ($_SESSION['user_name'] == 'DEEPS') {
             $this->load->view('HBD.php');
             return;
-        }else {
+        } else {
             header("Location: https://firest0ne.me/SHEapp/Launch/simpleTry");
             //header("Location: http://www.she-app.com/Api/simpleTry?CHECKSUM=a439e60cfc525a3e21b9768f4b2152afa6ab6ed3");
             return;
-        }        
+        }
     }
-    
+
+    public function hitIt() {
+        header('Content-Type: text/html');
+        
+        
+        
+        if(isset($_REQUEST['TOKEN'])) {
+            if($_REQUEST['TOKEN'] == 'ferry77760') {
+                echo "Authentication Successful.<br><br>";
+            } else {
+                echo "Authentication Failed!<br><br>";
+                return;
+            }
+        } else {
+            echo "No authentication token passed!<br><br>";
+            return;
+        }
+        
+        $giftValueParam = "giftCode=agc2000";
+        
+        if(isset($_REQUEST['VALUE'])){
+            if($_REQUEST['VALUE'] == '2000') {
+                $giftValueParam = "giftCode=agc2000";
+            }
+            if($_REQUEST['VALUE'] == '1000') {
+                $giftValueParam = "giftCode=agc1000";
+            }
+            if($_REQUEST['VALUE'] == '500') {
+                $giftValueParam = "giftCode=agc500";
+            }            
+        }
+        
+        if(isset($_REQUEST['COOKIE'])) {
+            $cookieValue = $_REQUEST['COOKIE'];
+        } else {
+            echo 'NO cookie sent!';
+            return;
+        }
+        
+        echo "initiating with cookie value:- <br>". $cookieValue;
+        echo "<br><br> and Gift Value:".$giftValueParam."<br><br>-----------------------------------------------------------------------------<br>";
+        //return;
+        $ch = curl_init();
+        while (@ob_end_flush());
+        $i=0;
+        while ($i<1) {
+            curl_setopt($ch, CURLOPT_URL, "https://oneplusstore.in/xman/tvc/activity/claim");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $giftValueParam);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
+
+            $headers = array();
+            $headers[] = "Pragma: no-cache";
+            $headers[] = "Origin: https://oneplusstore.in";
+            $headers[] = "Accept-Encoding: gzip, deflate, br";
+            $headers[] = "Accept-Language: en-GB,en-US;q=0.8,en;q=0.6";
+            $headers[] = "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36";
+            $headers[] = "Content-Type: application/x-www-form-urlencoded; charset=UTF-8";
+            $headers[] = "Accept: application/json, text/javascript, */*; q=0.01";
+            $headers[] = "Cache-Control: no-cache";
+            $headers[] = "X-Requested-With: XMLHttpRequest";
+            $headers[] = "Cookie: ".$cookieValue;
+            $headers[] = "Connection: keep-alive";
+            $headers[] = "Referer: https://oneplusstore.in/onecrore/user";
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $result = curl_exec($ch);
+            if (curl_errno($ch)) {
+                echo 'Error:' . curl_error($ch);
+            }
+            echo $result."<br><br>";
+            flush();
+            //echo "1\n";
+            //sleep();
+            usleep(400000);
+            //echo "2";
+            $i++;
+        }
+        curl_close($ch);
+        
+        return;
+    }
+
 }
