@@ -496,12 +496,12 @@ class CommonLib {
                 if($data['LIST_ID'] == '-1') {
                     $msg = $data['ACTION_BY'] ." added a new list with title: ". $data['TITLE']. ".";
                 } else {
-                    $msg = $data['ACTION_BY']." update the list with title: ". $data['TITLE']. ".";
+                    $msg = $data['ACTION_BY']." updated the list with title: ". $data['TITLE']. ".";
                 }
                 break;
             case 'FOOD_MENU' :
                 $notificationModule = "FOOD_MENU";
-                $msg = $data['ACTION_BY']." updated dish for ".$data['DAY']." date: ".$data['DATE']." meal: ".$data['MEAL'];
+                $msg = $data['ACTION_BY']." updated dish for ".$data['DAY']." date: ".$data['DATE']." meal: ".$data['MEAL']."\n";
                 if($data['IS_DEFAULT'] == 'Y') {
                     $msg .= " as ". $data['DISHNAME']." which is marked as DEFAULT.";
                 } else {
