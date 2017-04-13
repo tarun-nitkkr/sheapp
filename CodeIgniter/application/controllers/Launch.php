@@ -58,11 +58,11 @@ class Launch extends CI_Controller {
 
     public function hitIt() {
         header('Content-Type: text/html');
-        
-        
-        
-        if(isset($_REQUEST['TOKEN'])) {
-            if($_REQUEST['TOKEN'] == 'ferry77760') {
+
+
+
+        if (isset($_REQUEST['TOKEN'])) {
+            if ($_REQUEST['TOKEN'] == 'ferry77760') {
                 echo "Authentication Successful.<br><br>";
             } else {
                 echo "Authentication Failed!<br><br>";
@@ -72,35 +72,128 @@ class Launch extends CI_Controller {
             echo "No authentication token passed!<br><br>";
             return;
         }
-        
+
         $giftValueParam = "giftCode=agc2000";
-        
-        if(isset($_REQUEST['VALUE'])){
-            if($_REQUEST['VALUE'] == '2000') {
+
+        if (isset($_REQUEST['VALUE'])) {
+            if ($_REQUEST['VALUE'] == '2000') {
                 $giftValueParam = "giftCode=agc2000";
             }
-            if($_REQUEST['VALUE'] == '1000') {
+            if ($_REQUEST['VALUE'] == '1000') {
                 $giftValueParam = "giftCode=agc1000";
             }
-            if($_REQUEST['VALUE'] == '500') {
+            if ($_REQUEST['VALUE'] == '500') {
                 $giftValueParam = "giftCode=agc500";
-            }            
+            }
         }
-        
-        if(isset($_REQUEST['COOKIE'])) {
+
+        if (isset($_REQUEST['COOKIE'])) {
             $cookieValue = $_REQUEST['COOKIE'];
         } else {
             echo 'NO cookie sent!';
             return;
         }
-        
-        echo "initiating with cookie value:- <br>". $cookieValue;
-        echo "<br><br> and Gift Value:".$giftValueParam."<br><br>-----------------------------------------------------------------------------<br>";
+
+
+
+
+        echo "initiating with cookie value:- <br>" . $cookieValue;
+        echo "<br><br> and Gift Value:" . $giftValueParam . "<br><br>-----------------------------------------------------------------------------<br>";
         //return;
+
+        $cookieSet = explode(';', $cookieValue);       
+
+        $cookieArr = [];
+        foreach ($cookieSet as $cookie) {
+            $cookie = trim($cookie);
+            $cSet = explode('=', $cookie);
+            $cookieArr[$cSet[0]] = $cSet[1];
+        }
+
+        $updateArr = ['opbct', 'opnt', 'optime_browser', 'opnt_event'];
+        
+        //print_r($cookieValue);
+        
+        $timeToSet = 1492583400100;
+        
+        foreach ($updateArr as $value) {
+            $cookieArr[$value] = $timeToSet;
+            $timeToSet += 24;
+        }
+        
+        $cookieArr['opstep'] = intval($cookieArr['opstep']) + 2;
+        
+        $finalCookieStr = '';
+        $tempArr = [];
+        foreach ($cookieArr as $key => $value) {
+            $tempArr[] = $key."=".$value;
+        }
+        
+        $finalCookieStr = implode(';', $tempArr);
+        
+        $cookieValue = $finalCookieStr; //cookie updated
+        //print_r($cookieValue);exit;
+        
         $ch = curl_init();
+        
         while (@ob_end_flush());
-        $i=0;
-        while ($i<1) {
+        
+        while (1) {
+            $currentTime = time();
+            $scheduledTime = strtotime('2017-04-19 11:59:40');
+
+            if ($currentTime < $scheduledTime) {
+                echo "Waiting for 2017-04-19 11:59:59.<br>CurrentTime:-" . date('Y-m-d H:i:s', time()) . "<br><br>";
+                flush();
+                sleep(10);
+                continue;
+            }            
+            break;
+        }
+
+        
+        //fine waiting
+        while (1) {
+            $currentTime = time();
+            $scheduledTime = strtotime('2017-04-19 11:59:58');
+
+            if ($currentTime < $scheduledTime) {
+                echo "Waiting for 2017-04-19 11:59:59.<br>CurrentTime:-" . date('Y-m-d H:i:s', time()) . "<br><br>";
+                flush();
+                sleep(1);
+                continue;
+            }            
+            break;
+        }
+        
+        //more fine waiting
+        while(1) {
+            $currentTime = time();
+            $scheduledTime = strtotime('2017-04-19 12:00:00');
+
+            if ($currentTime < $scheduledTime) {
+                echo "Waiting for 2017-04-19 11:59:59.<br>CurrentTime:-" . date('Y-m-d H:i:s', time()) . "<br><br>";
+                //flush();
+                usleep(50000);
+                continue;
+            }            
+            break;
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        echo "-------------------Initiating request --------------------------<br><br>";
+        flush();
+
+        
+
+        $i = 0;
+        while ($i < 400) {
             curl_setopt($ch, CURLOPT_URL, "https://oneplusstore.in/xman/tvc/activity/claim");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $giftValueParam);
@@ -117,7 +210,7 @@ class Launch extends CI_Controller {
             $headers[] = "Accept: application/json, text/javascript, */*; q=0.01";
             $headers[] = "Cache-Control: no-cache";
             $headers[] = "X-Requested-With: XMLHttpRequest";
-            $headers[] = "Cookie: ".$cookieValue;
+            $headers[] = "Cookie: " . $cookieValue;
             $headers[] = "Connection: keep-alive";
             $headers[] = "Referer: https://oneplusstore.in/onecrore/user";
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -126,16 +219,28 @@ class Launch extends CI_Controller {
             if (curl_errno($ch)) {
                 echo 'Error:' . curl_error($ch);
             }
-            echo $result."<br><br>";
+
+            $resultArr = json_decode($result, true);
+
+
+            //var_dump($resultArr);
+
+            echo $result . "<br><br>";
             flush();
             //echo "1\n";
             //sleep();
-            usleep(400000);
+            usleep(200000);
             //echo "2";
             $i++;
+
+            if ($resultArr['errCode'] == 0) {
+                echo "<br> Stoping code since request is successful<br>";
+                flush();
+                break;
+            }
         }
         curl_close($ch);
-        
+
         return;
     }
 
