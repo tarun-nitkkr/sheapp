@@ -321,7 +321,7 @@ class Launch extends CI_Controller {
         echo "-------------------Initiating request --------------------------<br><br>";
         flush();
         $i = 0;
-        $file = fopen("log_$userName.txt", "a");
+        $file = fopen("log_test.txt", "a");
         while ($i < 1) {
             curl_setopt($ch, CURLOPT_URL, "https://oneplusstore.in/xman/tvc/activity/claim");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -356,7 +356,7 @@ class Launch extends CI_Controller {
 
             echo $result . "<br><br>";
             flush();
-            fwrite($file, "[TEST]Time:" . date("Y-m-d H:i:s") . ",OUTPUT:" . $result);
+            fwrite($file, "[TEST]Time:" . date("Y-m-d H:i:s") . ",COOKIE:".$cookieValue.",OUTPUT:" . $result);
             //echo "1\n";
             //sleep();
             usleep(200000);
