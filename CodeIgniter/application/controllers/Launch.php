@@ -119,8 +119,7 @@ class Launch extends CI_Controller {
         
         
 
-        echo "initiating with cookie value:- <br>" . $cookieValue;
-        echo "<br><br> and Gift Value:" . $giftValueParam . "<br><br>-----------------------------------------------------------------------------<br>";
+        
         //return;
 
         $cookieSet = explode(';', $cookieValue);
@@ -159,6 +158,11 @@ class Launch extends CI_Controller {
 
         $cookieValue = $finalCookieStr; //cookie updated
         //print_r($cookieValue);exit;
+        
+        echo "initiating with cookie value:- <br>" . $cookieValue;
+        echo "<h1>Username:".$userName."</h1>";
+        echo "<br><br> and Gift Value:" . $giftValueParam . "<br><br>-----------------------------------------------------------------------------<br>";
+        
 
         $ch = curl_init();
 
@@ -371,6 +375,14 @@ class Launch extends CI_Controller {
         }
         curl_close($ch);
         //fclose($file);
+        return;
+    }
+    
+    
+    public function checkTime() {
+        header('Content-Type: text/html');
+        $time = date('Y-m-d H:i:s');
+        echo "<h1>".$time."</h1>";
         return;
     }
 
