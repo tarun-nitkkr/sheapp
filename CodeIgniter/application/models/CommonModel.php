@@ -112,7 +112,11 @@ class CommonModel extends CI_Model {
         //var_dump($updateSet);
         $updateStr = '';
         foreach ($updateSet as $key => $value) {
-            $updateStr .= $key . "= '" . $value . "',";
+            if($value == null) {
+                $updateStr .= $key . "= NULL ,";
+            } else {
+                $updateStr .= $key . "= '" . $value . "',";
+            }
         }  
         $updateStr = trim($updateStr, ",");
         $updateQuery = "UPDATE LIST_ITEM SET $updateStr WHERE ID=$itemId";
