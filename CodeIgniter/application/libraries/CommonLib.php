@@ -287,6 +287,10 @@ class CommonLib {
                             $dataArr['BOUGHT_BY'] = $USER_ID;
                             $dataArr['BOUGHT_ON'] = date('Y-m-d', time());
                         }
+                    } else {
+                        $dataArr['IS_BOUGHT'] = 'N';
+                        $dataArr['BOUGHT_BY'] = null;
+                        $dataArr['BOUGHT_ON'] = null;
                     }
                     //var_dump($dataArr);exit;
                     $this->commonModel->updateListItem($ITEM_ID, $dataArr);
