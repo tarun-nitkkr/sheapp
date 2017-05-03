@@ -213,6 +213,11 @@ class CommonLib {
             $ERROR_CODE = '62';
             throw new Exception("Not a valid JSON");
         }
+        
+        $addedItemsSet = []; //notification purpose
+        $boughtItemsSet = []; //notification purpose
+        $unBoughtItemsSet = []; //notification purpose
+        
         if ($list['LIST_ID'] == -1) {
             //create a new list
             $tableName = 'SHOPPING_LIST';
@@ -239,7 +244,10 @@ class CommonLib {
                     $dataArr['IS_BOUGHT'] = $item['IS_BOUGHT'];
                     $dataArr['BOUGHT_BY'] = $USER_ID;
                     $dataArr['BOUGHT_ON'] = date('Y-m-d', time());
+                    $boughtItemsSet[] = $item['TITLE'];
                 }
+                $addedItemsSet[] = $item['TITLE'];
+                
                 $this->commonModel->insertIntoTableGeneric($tableName, $dataArr);
             }
         } else {
@@ -273,7 +281,9 @@ class CommonLib {
                         $dataArr['IS_BOUGHT'] = $item['IS_BOUGHT'];
                         $dataArr['BOUGHT_BY'] = $USER_ID;
                         $dataArr['BOUGHT_ON'] = date('Y-m-d', time());
+                        $boughtItemsSet[] = $item['TITLE'];
                     }
+                    $addedItemsSet[] = $item['TITLE'];;
                     $this->commonModel->insertIntoTableGeneric($tableName, $dataArr);
                 } else {
                     $ITEM_ID = $item['ID'];
@@ -286,11 +296,16 @@ class CommonLib {
                             $dataArr['IS_BOUGHT'] = $item['IS_BOUGHT'];
                             $dataArr['BOUGHT_BY'] = $USER_ID;
                             $dataArr['BOUGHT_ON'] = date('Y-m-d', time());
+                            $boughtItemsSet[] = $item['TITLE'];
                         }
                     } else {
-                        $dataArr['IS_BOUGHT'] = 'N';
-                        $dataArr['BOUGHT_BY'] = null;
-                        $dataArr['BOUGHT_ON'] = null;
+                        $isBoughtData = $this->commonModel->getBoughtStatusOfItem($ITEM_ID);
+                        if ($isBoughtData[0]['IS_BOUGHT'] == 'Y') {
+                            $dataArr['IS_BOUGHT'] = 'N';
+                            $dataArr['BOUGHT_BY'] = null;
+                            $dataArr['BOUGHT_ON'] = null;
+                            $unBoughtItemsSet[] = $item['TITLE'];
+                        }                        
                     }
                     //var_dump($dataArr);exit;
                     $this->commonModel->updateListItem($ITEM_ID, $dataArr);
@@ -304,7 +319,10 @@ class CommonLib {
         $notificationData = [
             'ACTION_BY' => $this->commonModel->getUserName($USER_ID),
             'LIST_ID' => $list['LIST_ID'],
-            'TITLE' => $list['TITLE']
+            'TITLE' => $list['TITLE'],
+            'NEW' => $addedItemsSet,
+            'BOUGHT' => $boughtItemsSet,
+            'UNBOUGHT' => $unBoughtItemsSet
         ];
         $this->generateAndSendNotificationMsg('SHOPPING_LIST', $notificationData);
         
@@ -498,10 +516,20 @@ class CommonLib {
             case 'SHOPPING_LIST' :
                 $notificationModule = 'SHOPPING_LIST';
                 if($data['LIST_ID'] == '-1') {
-                    $msg = $data['ACTION_BY'] ." added a new list with title: ". $data['TITLE']. ".";
+                    $msg = $data['ACTION_BY'] ." added a new list with title: ". $data['TITLE']. ", ";
                 } else {
-                    $msg = $data['ACTION_BY']." updated the list with title: ". $data['TITLE']. ".";
+                    $msg = $data['ACTION_BY']." updated the list with title: ". $data['TITLE']. ", ";
                 }
+                
+                if(!empty($data['NEW'])) {
+                    $msg .= "Added items:-". implode(', ', $data['NEW']);
+                }
+                if(!empty($data['BOUGHT'])) {
+                    $msg .= "Bought items:-". implode(', ', $data['BOUGHT']);
+                }
+                if(!empty($data['UNBOUGHT'])) {
+                    $msg .= "Un-Bought items:-". implode(', ', $data['UNBOUGHT']);
+                }                
                 break;
             case 'FOOD_MENU' :
                 $notificationModule = "FOOD_MENU";
