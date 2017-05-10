@@ -339,4 +339,24 @@ class CommonModel extends CI_Model {
     }
     
     
+    public function deleteListFromDb($listId) {
+        $query = "UPDATE SHOPPING_LIST set IS_ACTIVE = 'N' where ID = $listId";
+        $result = $this->db->query($query);
+        if ($result) {
+            return TRUE;
+        } 
+        return FALSE;
+    }
+    
+    public function getIsDoneOfList($listId) {
+        $query = "SELECT IS_DONE from SHOPPING_LIST where ID = $listId";
+        $result = $this->db->query($query);
+        if($result && $result->num_rows() > 0) {
+            $row = $result->row_array();
+            return $row['IS_DONE'];
+        }
+        return false;
+    }
+    
+    
 }

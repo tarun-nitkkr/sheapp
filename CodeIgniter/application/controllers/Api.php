@@ -185,6 +185,17 @@ class Api extends CI_Controller {
         }
     }
     
+    public function deleteList() {
+        try {
+            $listId = $this->getXssCleanedInput('LIST_ID');
+            $listTitle = $this->getXssCleanedInput('LIST_TITLE');            
+            $data = $this->commonLib->deleteList($listId, $listTitle);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        }
+    }
+    
     
     public function setNotificationToken() {
         try {

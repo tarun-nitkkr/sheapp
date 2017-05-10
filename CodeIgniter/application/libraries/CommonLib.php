@@ -328,6 +328,40 @@ class CommonLib {
         
         return [];
     }
+    
+    
+    public function deleteList($listId, $listTitle) {
+        $isDone = $this->commonModel->getIsDoneOfList($listId);
+        if(!$isDone) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        
+        if($isDone == 'N') {
+            global $ERROR_CODE;
+            $ERROR_CODE = '52';
+            throw new Exception("Invalid Query: Some unbought items still in list");
+        }
+        
+        
+        $status = $this->commonModel->deleteListFromDb($listId);
+        if(!$status) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        
+        global $USER_ID;
+        //NOTIFICATION
+        
+        $notificationData = [
+            'ACTION_BY' => $this->commonModel->getUserName($USER_ID),            
+            'LIST_TITLE' => $listTitle
+        ];
+        $this->generateAndSendNotificationMsg('LIST_DELETE', $notificationData);
+        return [];
+    }
 
     public function updateIsDoneOfList($listId) {
         $items = $this->commonModel->getAllItemsOfList($listId);
@@ -513,22 +547,26 @@ class CommonLib {
                 $notificationModule = 'ATTENDANCE';
                 $msg = $data['ACTION_BY']." deleted the marked absent against ID: ".$data['ID'].".";
                 break;
+            case 'LIST_DELETE':
+                $notificationModule = 'SHOPPING_LIST';
+                $msg = $data['ACTION_BY']." deleted shopping list with title: ".$data['LIST_TITLE'].".";
+                break;
             case 'SHOPPING_LIST' :
                 $notificationModule = 'SHOPPING_LIST';
                 if($data['LIST_ID'] == '-1') {
-                    $msg = $data['ACTION_BY'] ." added a new list with title: ". $data['TITLE']. ", ";
+                    $msg = $data['ACTION_BY'] ." added a new list with title: ". $data['TITLE']. ".";
                 } else {
-                    $msg = $data['ACTION_BY']." updated the list with title: ". $data['TITLE']. ", ";
+                    $msg = $data['ACTION_BY']." updated the list with title: ". $data['TITLE']. ".";
                 }
                 
                 if(!empty($data['NEW'])) {
-                    $msg .= "Added items:-". implode(', ', $data['NEW']);
+                    $msg .= ", Added items:-". implode(', ', $data['NEW']);
                 }
                 if(!empty($data['BOUGHT'])) {
-                    $msg .= "Bought items:-". implode(', ', $data['BOUGHT']);
+                    $msg .= ", Bought items:-". implode(', ', $data['BOUGHT']);
                 }
                 if(!empty($data['UNBOUGHT'])) {
-                    $msg .= "Un-Bought items:-". implode(', ', $data['UNBOUGHT']);
+                    $msg .= ", Un-Bought items:-". implode(', ', $data['UNBOUGHT']);
                 }                
                 break;
             case 'FOOD_MENU' :
