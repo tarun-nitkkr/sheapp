@@ -146,6 +146,22 @@ class Api extends CI_Controller {
             $this->handleException($exc);
         }
     }
+    
+    /**
+     * API to attach a Shopping List to a food menu item
+     * PARAMS: ListId, foodMenuId
+     * RETURNS: OK response
+     */
+    public function attachListToFood() {
+       try {
+            $foodId = $this->getXssCleanedInput('FOOD_ID');
+            $listId = $this->getXssCleanedInput('LIST_ID');
+            $data = $this->commonLib->attachListToFood($foodId, $listId);
+            $this->sendOkResponse($data);
+        } catch (Exception $exc) {
+            $this->handleException($exc);
+        } 
+    }
 
     /**
      * API to get all Lists i.e. even completed lists

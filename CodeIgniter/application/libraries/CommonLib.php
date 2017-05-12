@@ -141,6 +141,7 @@ class CommonLib {
         //validate input--done
 
         $result = $this->commonModel->updateFoodMenuInDb($dishName, $date, $day, $meal, $isDefault);
+        //var_dump($result);exit;
         if (!$result) {
             global $ERROR_CODE;
             $ERROR_CODE = '80';
@@ -159,8 +160,24 @@ class CommonLib {
         ];
         $this->generateAndSendNotificationMsg('FOOD_MENU', $notificationData);
         
+        return ['INSERTION_ID' => $result];
+    }
+    
+    
+    public function attachListToFood($foodId, $listId) {
+        $updateSet = [
+            'LIST_ID' => $listId
+        ];
+        $status = $this->commonModel->updateFoodMenuTable($foodId, $updateSet);
+        if(!$status) {
+            global $ERROR_CODE;
+            $ERROR_CODE = '120';
+            throw new Exception("No data found/query failed!");
+        }
+        
         return [];
     }
+    
 
     public function getAllLists() {
         $data = $this->commonModel->getAllListsFromDb();
@@ -225,9 +242,9 @@ class CommonLib {
             $dataArr['TITLE'] = $list['TITLE'];
             $dataArr['CREATED_ON'] = date('Y-m-d H:i:s', time());
             $dataArr['CREATED_BY'] = $USER_ID;
-            $this->commonModel->insertIntoTableGeneric($tableName, $dataArr);
-            $lastTupple = $this->commonModel->getLastInsertedTupple($tableName);
-            $LIST_ID = $lastTupple[0]['ID'];
+            $LIST_ID = $this->commonModel->insertIntoTableGeneric($tableName, $dataArr);
+            //$lastTupple = $this->commonModel->getLastInsertedTupple($tableName);
+            //$LIST_ID = $lastTupple[0]['ID'];
             //now insert items one by one from the JSON
             unset($tableName);
             $tableName = 'LIST_ITEM';
@@ -326,7 +343,7 @@ class CommonLib {
         ];
         $this->generateAndSendNotificationMsg('SHOPPING_LIST', $notificationData);
         
-        return [];
+        return ['INSERTION_ID' => $LIST_ID];
     }
     
     

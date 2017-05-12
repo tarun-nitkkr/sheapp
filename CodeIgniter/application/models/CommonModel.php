@@ -95,7 +95,7 @@ class CommonModel extends CI_Model {
             return FALSE;
         }
 
-        return TRUE;
+        return $this->db->insert_id();
     }
 
     public function getAllListsFromDb() {
@@ -163,9 +163,9 @@ class CommonModel extends CI_Model {
         $values = "('" . implode("','", array_values($dataArr)). "')";
         $sql = "INSERT INTO $tableName $keys VALUES $values";
         if(!$this->db->query($sql)){
-            throw new \Exception('Query error.');
+            return False;
         }
-        return true;
+        return $this->db->insert_id();
     }
     
     
@@ -356,6 +356,19 @@ class CommonModel extends CI_Model {
             return $row['IS_DONE'];
         }
         return false;
+    }
+    
+    public function updateFoodMenuTable($id, $updateSet) {
+        $updateStr = '';
+        foreach ($updateSet as $key => $value) {
+            $updateStr .= $key . "= '" . $value . "',";
+        }  
+        $updateStr = trim($updateStr, ",");
+        $updateQuery = "UPDATE FOOD_MENU SET $updateStr WHERE ID=$id";
+        if (!$this->db->query($updateQuery)) {
+            return FALSE;
+        }
+        return TRUE;
     }
     
     
